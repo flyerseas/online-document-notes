@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档锚链接</title>
+    <!-- <link rel="stylesheet" href="css/index.css"> -->
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            height: 100%;
+            overflow: hidden;
+            display: block;
+        }
+
+        .header {
+            position: fixed;
+            width: 100%;
+            height: 120px;
+            line-height: 120px;
+            background: #e5e5e5;
+        }
+
+        .header ul {
+            margin: 0;
+        }
+
+        .header ul li {
+            list-style-type: none;
+            display: inline-flex;
+            width: 100px;
+        }
+
+        .header ul li a {
+            text-decoration: none;
+        }
+
+        .content {
+            padding-top: 120px;
+        }
+
+        .content .content-box {
+            height: 300px;
+            border: 1px solid red;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+
+            var list = document.getElementById('menu-list').getElementsByTagName('li');
+            for (let index = 0; index < list.length; index++) {
+                list[index].addEventListener('click', function () {
+                    scrollContentBox(index);
+                })
+            }
+
+            function scrollContentBox(boxIndex, offset = - 120) {
+                var top = 0;
+                var scrolltop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop;
+                var targeTop = document.getElementById('box' + (boxIndex + 1)).offsetTop || { offsetTop: 0 };
+                top = targeTop - scrolltop;
+                console.log('top: ' + top);
+                window.scrollBy({ top: top + offset, behavior: 'smooth' })
+            }
+
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <ul id="menu-list">
+                <li>链接一</li>
+                <li>链接二</li>
+                <li>链接三</li>
+                <li>链接四</li>
+                <li>链接五</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div class="content-box" id="box1">链接一</div>
+            <div class="content-box" id="box2">链接二</div>
+            <div class="content-box" id="box3">链接三</div>
+            <div class="content-box" id="box4">链接四</div>
+            <div class="content-box" id="box5">链接五</div>
+        </div>
+    </div>
+</body>
+
+</html>

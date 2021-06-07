@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文档锚链接</title>
+    <!-- <link rel="stylesheet" href="css/index.css"> -->
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .container {
+            height: 100%;
+            overflow: auto;
+            display: block;
+        }
+
+        .header {
+            position: fixed;
+            width: 100%;
+            height: 120px;
+            line-height: 120px;
+            background: #e5e5e5;
+            top: 0;
+        }
+
+        .header ul {
+            margin: 0;
+        }
+
+        .header ul li {
+            list-style-type: none;
+            display: inline-flex;
+            width: 100px;
+        }
+
+        .header ul li a {
+            text-decoration: none;
+        }
+
+        .content {
+            margin-top: 120px;
+            height: calc(100vh - 120px);
+            overflow-y: scroll;
+            display: flex;
+        }
+
+        .content .describe {
+            flex: 1;
+        }
+
+        .content .comment {
+            width: 400px;
+            border-left: 6px;
+            box-sizing: border-box;
+        }
+
+        .content .content-box {
+            height: 300px;
+            border: 1px solid red;
+            position: relative;
+        }
+
+        .content .content-box .comment-btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            border: 1px solid orange;
+        }
+
+        .comment-content {
+            height: 600px;
+            border: 2px solid greenyellow;
+            border-left: 4px solid blue;
+            /* margin-bottom: 20px; */
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            //绑定顶部导航菜单滑动到对应区域的事件
+            var list = document.getElementById('menu-list').getElementsByTagName('li');
+            for (let i = 0; i < list.length; i++) {
+                list[i].onclick = function () {
+                    scrollContentBox(i + 1);
+                };
+            }
+
+            //绑定右侧的comment内容区域滑动到对应的内容区域的事件
+            var commentList = document.getElementById('comment').getElementsByTagName('div');
+            for (let j = 0; j < commentList.length; j++) {
+                commentList[j].onclick = function () {
+                    scrollContentBox(j + 1);
+                };
+            }
+
+            //绑定批注按钮滑动右侧批注的事件
+            var commentBtnList = document.getElementById('describe').getElementsByClassName('comment-btn');
+            for (let y = 0; y < commentList.length; y++) {
+                commentBtnList[y].onclick = function () {
+                    scrollCommentBox(y + 1);
+                };
+            }
+            console.log(commentBtnList);
+
+            //滑动右侧批注的方法
+            function scrollCommentBox(boxIndex) {
+                var commentBox = document.getElementById('comment' + boxIndex);
+                //批注内容距离浏览器上边的距离
+                var commentBoxOffsetTop = commentBox.offsetTop || 0;
+                //正文内容距离浏览器上边的距离
+                var contentBoxOffsetTop = document.getElementById('box' + boxIndex).offsetTop || 0;
+                console.log(`批注内容距离上边距的距离: `, commentBoxOffsetTop);
+                console.log(`批注内容距离上边距的距离: ${commentBoxOffsetTop}, 正文距离浏览器上边的距离: ${contentBoxOffsetTop}`);
+                commentBox.style.position = 'relative';
+                let top = 0;
+                if (contentBoxOffsetTop == commentBoxOffsetTop)
+                    return;
+                if (contentBoxOffsetTop > commentBoxOffsetTop) {
+                    // 批注的内容需要往下滚动 contentBoxOffsetTop - commentBoxOffsetTop
+                    top = commentBoxOffsetTop - contentBoxOffsetTop;
+                    console.log('批注往下滚动： ' + top);
+                } else {
+                    // 批注的内容需要往上滚动 commentBoxOffsetTop - contentBoxOffsetTop
+                    top = contentBoxOffsetTop - commentBoxOffsetTop;
+                    console.log('批注往上滚动： ' + top);
+                }
+
+                // 滑动右侧的comment的距离
+                const commentContainer = document.getElementById('comment');
+                const oldTransform = commentContainer.style.transform;
+                console.log(`oldTransform: ${oldTransform}`);
+                let translateY = 0;
+                if (commentBoxOffsetTop == 0) {
+                    translateY = commentBoxOffsetTop;
+                } else {
+                    if (oldTransform) {
+                        translateY = top - 120;
+                    } else {
+                        translateY = top;
+                    }
+                }
+                commentContainer.style.transform = `translateY(${translateY}px)`;
+            }
+
+            //滑动正文内容的方法
+            function scrollContentBox(boxIndex, offset = - 120) {
+                var top = 0;
+                var scrolltop = document.getElementById('wrap').scrollTop; // || document.getElementById('wrap').pageYOffset;
+                var targeTop = document.getElementById('box' + boxIndex).offsetTop || 0;
+                console.log(`元素的offsetTop: ${targeTop}, wrap的滑动高度: ${scrolltop}`)
+                if (targeTop == 0) {
+                    top = scrolltop;
+                } else {
+                    top = targeTop - scrolltop;
+                }
+                console.log('top: ' + top);
+                document.getElementById('wrap').scrollBy({ top: top + offset, behavior: 'smooth' });
+                //当锚链接滑动到位置后则滑动右侧的备注到当前位置
+                scrollCommentBox(boxIndex);
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <ul id="menu-list">
+                <li>链接一</li>
+                <li>链接二</li>
+                <li>链接三</li>
+                <li>链接四</li>
+                <li>链接五</li>
+            </ul>
+        </div>
+        <div class="content" id="wrap">
+            <div class="describe" id="describe">
+                <div class="content-box" id="box1">链接一 <span class="comment-btn">批注</span></div>
+                <div class="content-box" id="box2">链接二 <span class="comment-btn">批注</span></div>
+                <div class="content-box" id="box3">链接三 <span class="comment-btn">批注</span></div>
+                <div class="others" style="height: 600px;">
+                    <div style="height: 300px; background: orchid;"></div>
+                    <div class="content-box" id="box4">链接四 <span class="comment-btn">批注</span></div>
+                </div>
+                <div class="content-box" id="box5">链接五 <span class="comment-btn">批注</span></div>
+            </div>
+            <div class="comment" id="comment">
+                <div class="comment-content" id="comment1">批注一（点我可以找到左侧的正文位置哦）</div>
+                <div class="comment-content" id="comment2">批注二（点我可以找到左侧的正文位置哦）</div>
+                <div class="comment-content" id="comment3">批注三（点我可以找到左侧的正文位置哦）</div>
+                <div class="comment-content" id="comment4">批注四（点我可以找到左侧的正文位置哦）</div>
+                <div class="comment-content" id="comment5">批注五（点我可以找到左侧的正文位置哦）</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
